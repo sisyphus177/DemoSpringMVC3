@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <context:property-placeholder location="classpath:jdbc.properties" />
+
+    <!--<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
+        <!--<property name="locations" value="classpath:jdbc.properties" />-->
+    <!--</bean>-->
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driverClass}" />
+        <property name="jdbcUrl" value="${jdbc.url}" />
+        <property name="user" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+    </bean>
+
+    <bean id="dataSourceForHibernate" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driverClass}" />
+        <property name="jdbcUrl" value="${jdbc.url}" />
+        <property name="user" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+        <property name="minPoolSize" value="5" />
+        <property name="maxPoolSize" value="20" />
+        <property name="maxIdleTime" value="1200" />
+        <property name="acquireIncrement" value="1" />
+        <property name="maxStatements" value="100" />
+        <property name="idleConnectionTestPeriod" value="120" />
+        <!--<property name="acquireRetryAttempts" value="3"/>-->
+        <!--<property name="breakAfterAcquireFailure" value="true" />-->
+        <!--<property name="testConnectionOnCheckin" value="true" />-->
+        <!--<property name="testConnectionOnCheckout" value="true" />-->
+    </bean>
+
+    <!--<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">-->
+        <!--<property name="dataSource" ref="dataSource" />-->
+        <!--<property name="hibernateProperties">-->
+            <!--<props>-->
+                <!--<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>-->
+                <!--<prop key="show_sql">true</prop>-->
+                <!--<prop key="format_sql">true</prop>-->
+                <!--<prop key="current_session_context_class">thread</prop>-->
+            <!--</props>-->
+        <!--</property>-->
+        <!--<property name="mappingResources" value="demo/hibernate/entity/Account.hbm.xml" />-->
+    <!--</bean>-->
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSourceForHibernate" />
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="show_sql">true</prop>
+                <prop key="format_sql">true</prop>
+                <prop key="current_session_context_class">thread</prop>
+            </props>
+        </property>
+        <property name="mappingResources" value="demo/spring/model/entity/Account.hbm.xml" />
+    </bean>
+
+    <!--<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">-->
+        <!--<property name="hibernateProperties">-->
+            <!--<props>-->
+                <!--<prop key="hibernate.connection.username">transactiontest</prop>-->
+                <!--<prop key="hibernate.connection.password">transactiontest</prop>-->
+                <!--<prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>-->
+                <!--<prop key="hibernate.connection.url">jdbc:mysql://localhost:3306/transactiontest</prop>-->
+                <!--<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>-->
+                <!--<prop key="show_sql">true</prop>-->
+                <!--<prop key="format_sql">true</prop>-->
+                <!--<prop key="current_session_context_class">thread</prop>-->
+                <!--<prop key="connection.provider_class">org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider</prop>-->
+
+                <!--<prop key="hibernate.c3p0.acquire_increment">1</prop>-->
+                <!--<prop key="hibernate.c3p0.min_size">5</prop>-->
+                <!--<prop key="hibernate.c3p0.max_size">20</prop>-->
+                <!--<prop key="hibernate.c3p0.timeout">1200</prop>-->
+                <!--<prop key="hibernate.c3p0.idle_test_period">120</prop>-->
+                <!--<prop key="hibernate.c3p0.max_statements">100</prop>-->
+
+                <!--&lt;!&ndash;<prop key="c3p0.acquire_increment">1</prop>&ndash;&gt;-->
+                <!--&lt;!&ndash;<prop key="c3p0.min_size">5</prop>&ndash;&gt;-->
+                <!--&lt;!&ndash;<prop key="c3p0.max_size">20</prop>&ndash;&gt;-->
+                <!--&lt;!&ndash;<prop key="c3p0.timeout">1200</prop>&ndash;&gt;-->
+                <!--&lt;!&ndash;<prop key="c3p0.idle_test_period">120</prop>&ndash;&gt;-->
+                <!--&lt;!&ndash;<prop key="c3p0.max_statements">100</prop>&ndash;&gt;-->
+
+            <!--</props>-->
+        <!--</property>-->
+        <!--<property name="mappingResources" value="demo/hibernate/entity/Account.hbm.xml" />-->
+    <!--</bean>-->
+
+    <!--<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">-->
+        <!--<property name="configLocation" value="hibernate.cfg.xml" />-->
+    <!--</bean>-->
+
+
+    <context:component-scan base-package="demo.spring.model.dao" />
+
+    <!--<bean id="accountDaoImpl" class="demo.spring.dao.AccountDaoImpl">-->
+        <!--<property name="dataSource" ref="dataSource" />-->
+    <!--</bean>-->
+
+    <!--<bean id="accountDaoHibernateImpl" class="demo.spring.dao.AccountDaoHibernateImpl">-->
+        <!--<property name="sessionFactory" ref="sessionFactory" />-->
+    <!--</bean>-->
+
+    <!--<bean id="accountDaoHibernateTemplateImpl" class="demo.spring.dao.AccountDaoHibernateTemplateImpl">-->
+        <!--<property name="hibernateTemplate" ref="hibernateTemplate" />-->
+    <!--</bean>-->
+
+    <!--<bean id="hibernateTemplate" class="org.springframework.orm.hibernate4.HibernateTemplate">-->
+        <!--<property name="sessionFactory" ref="sessionFactory" />-->
+    <!--</bean>-->
+
+    <context:component-scan base-package="demo.spring.model.service" />
+
+
+    <!--<bean id="accountServiceImpl" class="demo.spring.service.AccountServiceImpl">-->
+        <!--<property name="accountDao" ref="accountDaoImpl" />-->
+    <!--</bean>-->
+
+    <!--<bean id="accountServiceHibernateImpl" class="demo.spring.service.AccountServiceHibernateImpl">-->
+        <!--<property name="accountDao" ref="accountDaoHibernateImpl" />-->
+    <!--</bean>-->
+
+    <!--<bean id="accountServiceHibernateTemplateImpl" class="demo.spring.service.AccountServiceHibernateTemplateImpl">-->
+        <!--<property name="accountDao" ref="accountDaoHibernateTemplateImpl" />-->
+    <!--</bean>-->
+
+
+
+    <bean id="dataSourceTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+        <qualifier value="dataSourceTransactionManager" />
+    </bean>
+
+    <bean id="hibernateTransactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <qualifier value="hibernateTransactionManager" />
+    </bean>
+
+    <tx:annotation-driven transaction-manager="dataSourceTransactionManager" />
+
+    <tx:annotation-driven transaction-manager="hibernateTransactionManager" />
+
+    <!--
+    Transaction Attributes:
+        1)PROPAGATION
+        2)ISOLATION
+        3)readOnly
+        4)+Exception
+        5)-Exception
+      -->
+
+    <!--<bean id="accountServiceImplProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+        <!--<property name="target" ref="accountServiceImpl" />-->
+        <!--<property name="transactionManager" ref="dataSourceTransactionManager" />-->
+        <!--<property name="transactionAttributes">-->
+            <!--<props>-->
+                <!--<prop key="*">PROPAGATION_REQUIRED</prop>-->
+            <!--</props>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!--<bean id="accountServiceHibernateImplProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+        <!--<property name="target" ref="accountServiceHibernateImpl" />-->
+        <!--<property name="transactionManager" ref="hibernateTransactionManager" />-->
+        <!--<property name="transactionAttributes">-->
+            <!--<props>-->
+                <!--<prop key="*">PROPAGATION_REQUIRED</prop>-->
+            <!--</props>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!--<bean id="accountServiceHibernateTemplateImplProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+        <!--<property name="target" ref="accountServiceHibernateTemplateImpl" />-->
+        <!--<property name="transactionManager" ref="hibernateTransactionManager" />-->
+        <!--<property name="transactionAttributes">-->
+            <!--<props>-->
+                <!--<prop key="*">PROPAGATION_REQUIRED</prop>-->
+            <!--</props>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!--<tx:advice id="dataSourceTxMgrAdvice" transaction-manager="dataSourceTransactionManager">-->
+        <!--<tx:attributes>-->
+            <!--<tx:method name="transfer" propagation="REQUIRED" isolation="DEFAULT" read-only="false" />-->
+        <!--</tx:attributes>-->
+    <!--</tx:advice>-->
+
+    <!--<tx:advice id="hibernateTxMgrAdvice" transaction-manager="hibernateTransactionManager">-->
+        <!--<tx:attributes>-->
+            <!--<tx:method name="transfer" propagation="REQUIRED" isolation="DEFAULT" read-only="false" />-->
+        <!--</tx:attributes>-->
+    <!--</tx:advice>-->
+
+    <!--<aop:config>-->
+        <!--<aop:pointcut id="accountServicePointcut" expression="execution(* demo.spring.service.interf.AccountService+.*(..))" />-->
+        <!--<aop:advisor id="accountServiceAdvisor" advice-ref="txAdvice" pointcut-ref="accountServicePointcut" />-->
+    <!--</aop:config>-->
+
+    <bean id="demoAspect" class="demo.spring.aop.DemoAspect" scope="prototype"/>
+
+    <aop:config>
+        <aop:pointcut id="accountServicePointcut" expression="execution(* demo.spring.model.service.interf.AccountService+.*(..))" />
+        <aop:aspect id="aspect" ref="demoAspect">
+            <aop:before method="before" pointcut-ref="accountServicePointcut" />
+            <aop:after method="after" pointcut-ref="accountServicePointcut" />
+        </aop:aspect>
+    </aop:config>
+
+</beans>
